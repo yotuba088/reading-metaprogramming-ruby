@@ -23,10 +23,10 @@ class EvilMailbox
     @obj = obj
     obj.auth(secret) if secret.is_a?(String)
 
-    define_singleton_method(:send_mail) do |destination,text|
+    define_singleton_method(:send_mail) do |destination,text,&block|
       text= secret.is_a?(String) ? text+secret : text
       result = @obj.send_mail(destination,text)
-      yield(result) if block_given?
+      block.call(result) if block
       nil
     end
 
@@ -37,4 +37,4 @@ class EvilMailbox
   end
 end
 
-# ruby -Itest test/04_block/test_spy_mailbox.rb -n
+# ruby -Itest test/04_block/test_spy_mailbox.rb
