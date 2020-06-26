@@ -28,7 +28,7 @@ class SimpleBot
     def respond(keyword, &block)
       ask=keyword
       define_method :ask do |arg|
-        block.call if arg==ask
+        arg==ask ? block.call : nil
       end
     end
 
