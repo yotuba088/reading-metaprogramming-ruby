@@ -12,3 +12,30 @@
 # 2. initializeメソッドはハッシュを受け取り、attr_accessorで作成したアトリビュートと同名のキーがあれば、自動でインスタンス変数に記録する
 #   1. ただし、この動作をwriterメソッドの履歴に残してはいけない
 # 3. 履歴がある場合、すべての操作履歴を放棄し、値も初期状態に戻す `restore!` メソッドを作成する
+
+module SimpleModel
+  def initialize(**hash)
+    @memory=hash
+    @flag=false
+  end
+
+  def self.included(base)
+    base.extend(ClassMethods)
+  end 
+
+  module ClassMethods
+    def attr_accessor(*attributes)
+      attr_reader(*attributes)
+      attributes.each do |attribute|
+        define_method("#{attribute}_changed?"){|name|
+
+
+    end
+  end
+
+  def changed?
+    @flag
+  end
+end
+
+# ruby -Itest test/05_class_definition/test_simple_record.rb
