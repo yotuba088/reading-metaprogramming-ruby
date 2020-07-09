@@ -68,4 +68,10 @@ class TestSimpleMock < MiniTest::Test
 
     assert_equal 2, obj.called_times(:imitated_method)
   end
+
+  def test_mock_returns_counts_zero
+    obj = SimpleMock.new
+
+    assert_equal 0, obj.called_times(:imitated_method)
+  end
 end
