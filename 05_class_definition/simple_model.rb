@@ -14,9 +14,8 @@
 # 3. 履歴がある場合、すべての操作履歴を放棄し、値も初期状態に戻す `restore!` メソッドを作成する
 
 module SimpleModel
-  def initialize(**hash)
-    @memory=hash
-    @flag=false
+  def initialize(**hashes)
+    @initialize=hashes
   end
 
   def self.included(base)
@@ -24,17 +23,20 @@ module SimpleModel
   end 
 
   module ClassMethods
-    def attr_accessor(*attributes)
-      attr_reader(*attributes)
-      attributes.each do |attribute|
-        define_method("#{attribute}_changed?"){|name|
-
-
+    def attr_accessor(*names)
+      attr_reader(*names)
+      names.each do |name|
+        instance_variable_set("@#{name}_changed", false)
+        define_method("#{name}_changed?") do |n|
+          instance_variable_set("@#{name}=", n)
+          instance_variable_set("@#{name}_changed", true)
+        end
+        define_method("#{name}_changed?"){instance_variable_set("@#{name}_changed")}
+      end
+      define_method :changed? do
+        names.map{ |name| instance_variable_get("@#{name}_changed")}.any?
+      end
     end
-  end
-
-  def changed?
-    @flag
   end
 end
 

@@ -37,3 +37,31 @@
 # obj.imitated_method #=> true
 # obj.called_times(:imitated_method) #=> 2
 # ```
+
+module SimpleMock
+  class << self
+    def new
+      mock(Object.new)
+    end
+
+    def mock(obj)
+      obj.extend(self)
+    end
+  end
+
+  def expects(arg,result)
+    define_singleton_method(arg){result}
+  end
+
+  def watch(arg)
+    instance_variable_set("@#{arg}",0) if instance_variable_get("@#{arg}").nil?
+    result=send(arg)
+    define_singleton_method(arg){instance_variable_set("@#{arg}",instance_variable_get("@#{arg}")+1);result}
+  end
+
+  def called_times(arg)
+    instance_variable_get("@#{arg}") || 0
+  end
+end
+
+# ruby -Itest test/05_class_definition/test_simple_mock.rb
